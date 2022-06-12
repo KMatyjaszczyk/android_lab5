@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.browse_images) {
             // TODO browsing images here
             Toast.makeText(this, "Browse images", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, BrowseActivity.class);
+            startActivity(intent);
         } else {
             throw new UnsupportedOperationException("Wrong menu item");
         }
