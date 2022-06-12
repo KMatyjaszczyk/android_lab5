@@ -70,8 +70,8 @@ public class ImageListAdapter extends
                 int index = (Integer) mButton.getTag();
                 Image img = mImageLista.get(index);
                 System.out.println(index);
-                intent.putExtra("currentImage",img);
-                intent.putExtra("showDetails",true);
+                intent.putExtra(BrowseActivity.CURRENT_IMAGE_KEY, img);
+                intent.putExtra(BrowseActivity.SHOW_DETAILS_KEY, true);
                 mActivity.finish();
                 mActivity.startActivity(intent);
             });

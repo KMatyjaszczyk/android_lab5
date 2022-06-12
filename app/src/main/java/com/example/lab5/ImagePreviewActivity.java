@@ -19,7 +19,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            Image image = extras.getParcelable("currentImage");
+            Image image = extras.getParcelable(BrowseActivity.CURRENT_IMAGE_KEY);
             FragmentDetails detailFragment = (FragmentDetails)
                     getSupportFragmentManager()
                             .findFragmentById(R.id.detailFragment);

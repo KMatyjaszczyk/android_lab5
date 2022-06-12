@@ -101,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.save_image) {
             tryToSaveImage();
         } else if (id == R.id.browse_images) {
-            // TODO browsing images here
-            Toast.makeText(this, "Browse images", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, BrowseActivity.class);
             startActivity(intent);
         } else {

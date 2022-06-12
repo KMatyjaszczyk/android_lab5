@@ -31,7 +31,7 @@ public class FragmentDetails extends Fragment {
         Button backBtn = getView().findViewById(R.id.back_btn);
         backBtn.setOnClickListener(view -> {
             Intent intent = new Intent(getActivity(),BrowseActivity.class);
-            intent.putExtra("showDetails",false);
+            intent.putExtra(BrowseActivity.SHOW_DETAILS_KEY,false);
             getActivity().startActivity(intent);
             getActivity().finish();
 
