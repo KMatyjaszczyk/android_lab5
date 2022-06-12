@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Lab5</string>
+    <string name="menuItemSaveImage">Save image</string>
+    <string name="menuItemBrowseImages">Browse images</string>
+    <string name="fileSavedSuccessMessage">Image saved</string>
+    <string name="fileSaveFailureMessage">Image saved</string>
 </resources>
