@@ -3,9 +3,12 @@ package com.example.lab5;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String COLOR_ORANGE = "#FFBB00";
     private static final String COLOR_BLUE = "#00FFFF";
     private static final String COLOR_GREEN = "#00FF00";
+
+    private static final int READ_CODE = 2137;
+    private static final int WRITE_CODE = 420;
 
     private DrawView mDrawView;
     private Button mButtonColorRed;
@@ -89,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
         mButtonClear.setOnClickListener(view -> mDrawView.clear());
     }
 
+
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -99,15 +110,51 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.save_image) {
-            tryToSaveImage();
+            saveImagePermissions();
         } else if (id == R.id.browse_images) {
-            Intent intent = new Intent(this, BrowseActivity.class);
-            startActivity(intent);
+            browseImagesPermissions();
         } else {
             throw new UnsupportedOperationException("Wrong menu item");
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveImagePermissions() {
+        boolean userHasWriteExternalPermission =
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_GRANTED;
+        if (userHasWriteExternalPermission || isApiLevelIsGreaterOrEqualToQ()) {
+            tryToSaveImage();
+        } else {
+            askForWriteExternalPermission();
+        }
+    }
+
+    private void askForWriteExternalPermission() {
+        ActivityCompat.requestPermissions(this, new String[]
+                {Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_CODE);
+    }
+
+    private void browseImagesPermissions() {
+        boolean userHasReadExternalPermission =
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_GRANTED;
+        if (userHasReadExternalPermission || isApiLevelIsGreaterOrEqualToQ()) {
+            browseImages();
+        } else {
+            askForReadExternalPermission();
+        }
+    }
+
+    private void askForReadExternalPermission() {
+        ActivityCompat.requestPermissions(this, new String[]
+                {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_CODE);
+    }
+
+    private void browseImages() {
+        Intent intent = new Intent(this, BrowseActivity.class);
+        startActivity(intent);
     }
 
     private void tryToSaveImage() {
@@ -123,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         Bitmap drawingBitmap = mDrawView.save();
         OutputStream imageOutputStream;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (isApiLevelIsGreaterOrEqualToQ()) {
             imageOutputStream = receiveOutputStreamForNewerAPI();
         } else {
             imageOutputStream = receiveOutputStreamForOlderAPI();
@@ -132,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
         drawingBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutputStream);
         imageOutputStream.close();
         Toast.makeText(this, getResources().getString(R.string.fileSavedSuccessMessage), Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isApiLevelIsGreaterOrEqualToQ() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
