@@ -13,64 +13,63 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ImageListAdapter extends
-        RecyclerView.Adapter<ImageListAdapter.ImagesViewHolder> {
-    public List<Image> getImageList() {
-        return mImageLista;
+public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImagesViewHolder> {
+    private LayoutInflater mLayoutInflater;
+    private List<Image> mImages;
+    private final Activity mActivity;
+
+    public ImageListAdapter(Activity context, List<Image>images) {
+        this.mLayoutInflater = LayoutInflater.from(context);
+        this.mImages = images;
+        this.mActivity = context;
     }
 
-    public void setImageList(List<Image> mImageLista) {
-        this.mImageLista = mImageLista;
+    public List<Image> getImages() {
+        return mImages;
     }
 
-    private List<Image> mImageLista;
-    private Activity mActivity;
-    private Image currentImage;
-
-    //konstruktor
-    public ImageListAdapter(Activity kontekst, List<Image>images) {
-        this.mImageLista = images;
-        this.mActivity = kontekst;
+    public void setImages(List<Image> mImages) {
+        this.mImages = mImages;
     }
 
     @NonNull
     @Override
     public ImagesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        //utworzenie layoutu wiersza na podstawie XMLa
-        LayoutInflater mPompka = mActivity.getLayoutInflater();
-        View wiersz = mPompka.inflate(R.layout.image_view,viewGroup, false);
-        //zwrócenie nowego obiektu holdera
-        return new ImagesViewHolder(wiersz);
+        View row = mLayoutInflater.inflate(R.layout.image_view,viewGroup, false);
+        return new ImagesViewHolder(row);
     }
 
-    //wypełnia wiersz przechowywany w pojemniku danymi dla kreślonego wiersza
     @Override
-    public void onBindViewHolder(@NonNull ImagesViewHolder imagesViewHolder, int numerWiersza) {
-        Image image = mImageLista.get(numerWiersza);
-        imagesViewHolder.mTextName.setText(image.getName());
-        imagesViewHolder.mButton.setTag(numerWiersza);
+    public void onBindViewHolder(@NonNull ImagesViewHolder holder, int position) {
+        Image image = mImages.get(position);
+        holder.mTextName.setText(image.getName());
+        holder.mButton.setTag(position);
     }
 
     @Override
     public int getItemCount() {
-        return mImageLista.size();
+        return mImages.size();
     }
 
     public class ImagesViewHolder extends RecyclerView.ViewHolder {
         TextView mTextName;
         Button mButton;
 
-        public ImagesViewHolder(@NonNull View glownyElementWiersza) {
-            super(glownyElementWiersza);
+        public ImagesViewHolder(@NonNull View itemView) {
+            super(itemView);
+
             mButton = itemView.findViewById(R.id.button);
             mTextName = itemView.findViewById(R.id.nazwa);
+
+            addGoToDetailsViewListener();
+        }
+
+        private void addGoToDetailsViewListener() {
             mButton.setOnClickListener(view -> {
-                System.out.println("Wcisniety button, ide do okna z detalami");
-                Intent intent = new Intent(mActivity,BrowseActivity.class);
+                Intent intent = new Intent(mActivity, BrowseActivity.class);
                 int index = (Integer) mButton.getTag();
-                Image img = mImageLista.get(index);
-                System.out.println(index);
-                intent.putExtra(BrowseActivity.CURRENT_IMAGE_KEY, img);
+                Image image = mImages.get(index);
+                intent.putExtra(BrowseActivity.CURRENT_IMAGE_KEY, image);
                 intent.putExtra(BrowseActivity.SHOW_DETAILS_KEY, true);
                 mActivity.finish();
                 mActivity.startActivity(intent);

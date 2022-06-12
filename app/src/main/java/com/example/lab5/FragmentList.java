@@ -128,7 +128,7 @@ public class FragmentList extends Fragment {
                 Image image = new Image(id, name, contentUri.toString());
                 mImageList.add(image);
             }
-            mImageListAdapter.setImageList(mImageList);
+            mImageListAdapter.setImages(mImageList);
         }
     }
 }

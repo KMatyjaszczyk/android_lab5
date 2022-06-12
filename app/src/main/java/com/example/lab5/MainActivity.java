@@ -95,11 +95,6 @@ public class MainActivity extends AppCompatActivity {
         mButtonClear.setOnClickListener(view -> mDrawView.clear());
     }
 
-
-
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
