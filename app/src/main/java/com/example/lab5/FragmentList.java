@@ -28,12 +28,8 @@ public class FragmentList extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        // przypisujemy layout do fragmentu
-        View view = inflater.inflate(R.layout.fragment_overview, container,
-                false);
-        // definiujemy listener dla poszczególnych elementów (buttonów)
 
-        // przypisujemy elementom clickListener
+        View view = inflater.inflate(R.layout.fragment_overview, container, false);
         RecyclerView imagesRecycler = view.findViewById(R.id.images_recycler);
         mImageList = new ArrayList<>();
         mImageListAdapter = new ImageListAdapter(getActivity(), mImageList);
@@ -43,24 +39,16 @@ public class FragmentList extends Fragment {
         return view;
     }
 
-    //    public void createTable(int iloscOcen, String[]przedmioty, ArrayList<Image> ListaImages){
-//        for (int i = 0; i < iloscOcen; i++) {
-//            ListaImages.add(new Image(i,));
-//        }
-//    }
-// interfejs, który będzie implementować aktywność
+    // interfejs, który będzie implementować aktywność
     public interface OverviewFragmentActivityListener {
-        public void onItemSelected(String msg);
-
+        void onItemSelected(String msg);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof
-                OverviewFragmentActivityListener) {
-            listener = (OverviewFragmentActivityListener)
-                    activity;
+        if (activity instanceof OverviewFragmentActivityListener) {
+            listener = (OverviewFragmentActivityListener) activity;
         } else {
             throw new ClassCastException(activity.toString() + " musi implementować interfejs: OverviewFragment.OverviewFragmentActivityListener");
         }

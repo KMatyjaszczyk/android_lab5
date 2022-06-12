@@ -7,16 +7,16 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/back_btn"
+        android:id="@+id/backButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="back" />
+        android:text="@string/returnFromImageViewButton" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:srcCompat="@tools:sample/avatars"
+        tools:srcCompat="@tools:sample/backgrounds/scenic"
         android:scaleType="fitXY"
         />
 

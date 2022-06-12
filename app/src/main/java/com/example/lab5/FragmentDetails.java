@@ -35,7 +35,7 @@ public class FragmentDetails extends Fragment {
     }
 
     private void addComeBackToBrowseActivityListener() {
-        Button backButton = getView().findViewById(R.id.back_btn);
+        Button backButton = getView().findViewById(R.id.backButton);
 
         backButton.setOnClickListener(view -> {
             Intent intent = new Intent(getActivity(), BrowseActivity.class);

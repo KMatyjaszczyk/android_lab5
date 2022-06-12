@@ -4,4 +4,7 @@
     <string name="menuItemBrowseImages">Browse images</string>
     <string name="fileSavedSuccessMessage">Image saved</string>
     <string name="fileSaveFailureMessage">Image saved</string>
+    <string name="selectImageButton">Select</string>
+    <string name="examplePhotoTextView">Photo</string>
+    <string name="returnFromImageViewButton">Return</string>
 </resources>
