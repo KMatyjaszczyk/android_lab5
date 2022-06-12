@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class DrawView extends View {
     private static final int DEFAULT_COLOR = Color.RED;
-    private static final int STROKE_WIDTH = 20;
-    private static final int CIRCLE_RADIUS = 30;
+    private static final int STROKE_WIDTH = 10;
+    private static final int CIRCLE_RADIUS = 15;
     private static final float TOUCH_TOLERANCE = 4;
 
     private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -65,6 +65,11 @@ public class DrawView extends View {
 
     public void setColor(int color) {
         mCurrentColor = color;
+    }
+
+    public void clear() {
+        strokes.clear();
+        drawBackground();
     }
 
     public Bitmap save() {
