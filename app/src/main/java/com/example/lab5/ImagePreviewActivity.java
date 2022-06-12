@@ -1,5 +1,6 @@
 package com.example.lab5;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -10,18 +11,20 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE) {
-            finish();
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Intent intent = new Intent(this, BrowseActivity.class);
+            startActivity(intent);
             return;
         }
-        setContentView(R.layout.activity_image_preview);
 
+        setContentView(R.layout.activity_image_preview);
         Bundle extras = getIntent().getExtras();
+
         if (extras != null) {
             Image image = extras.getParcelable(BrowseActivity.CURRENT_IMAGE_KEY);
-            FragmentDetails detailFragment = (FragmentDetails)
-                    getSupportFragmentManager()
+            FragmentDetails detailFragment = (FragmentDetails) getSupportFragmentManager()
                             .findFragmentById(R.id.detailFragment);
             detailFragment.setImage(image);
         }
