@@ -29,7 +29,7 @@ public class FragmentList extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_overview, container, false);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
         RecyclerView imagesRecycler = view.findViewById(R.id.images_recycler);
         mImageList = new ArrayList<>();
         mImageListAdapter = new ImageListAdapter(getActivity(), mImageList);
