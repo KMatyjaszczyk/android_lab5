@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,29 +13,36 @@ import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 
 public class FragmentDetails extends Fragment {
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater
-                .inflate(R.layout.fragment_details, container,
-                        false);
-        return view;
+        return inflater.inflate(
+                R.layout.fragment_details, container, false);
     }
+
     public void setImage(Image image) {
-        //Ważne – URI zawiera id obrazka a nie nazwę
+        setProperImageUriInImageView(image);
+        addComeBackToBrowseActivityListener();
+    }
+
+    private void setProperImageUriInImageView(Image image) {
         Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 Long.toString(image.id));
         ImageView imageView = getView().findViewById(R.id.imageView);
-        Button backBtn = getView().findViewById(R.id.back_btn);
-        backBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(getActivity(),BrowseActivity.class);
-            intent.putExtra(BrowseActivity.SHOW_DETAILS_KEY,false);
+        imageView.setImageURI(imageUri);
+    }
+
+    private void addComeBackToBrowseActivityListener() {
+        Button backButton = getView().findViewById(R.id.back_btn);
+
+        backButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), BrowseActivity.class);
+            intent.putExtra(BrowseActivity.SHOW_DETAILS_KEY, false);
             getActivity().startActivity(intent);
             getActivity().finish();
 
         });
-        imageView.setImageURI(imageUri);
-        Log.d("TAG","setImage() - uri: "+imageUri);
     }
 }
