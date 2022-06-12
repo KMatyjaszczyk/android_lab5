@@ -46,11 +46,11 @@ public class BrowseActivity extends AppCompatActivity implements
     private void processLandscapeOrientation() {
         if (mShowDetails) {
             setContentView(R.layout.activity_browse_landscape);
-            FragmentDetails fragment = (FragmentDetails) getSupportFragmentManager()
+            FragmentDetails detailFragment = (FragmentDetails) getSupportFragmentManager()
                             .findFragmentById(R.id.detailFragment);
 
-            if (fragment != null && fragment.isInLayout()) {
-                fragment.setImage(mCurrentImage);
+            if (detailFragment != null && detailFragment.isInLayout()) {
+                detailFragment.setImage(mCurrentImage);
             }
         }
         else {
