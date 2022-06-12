@@ -89,8 +89,18 @@ public class DrawView extends View {
 
         for (Stroke fp : paths) {
             mPaint.setColor(fp.color);
+
+            mPaint.setStyle(Paint.Style.FILL);
+            mCanvas.drawCircle(fp.startPoint.x, fp.startPoint.y, 30, mPaint);
+
+            mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setStrokeWidth(fp.strokeWidth);
             mCanvas.drawPath(fp.path, mPaint);
+
+            if (fp.endPoint != null) {
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(fp.endPoint.x, fp.endPoint.y, 30, mPaint);
+            }
         }
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
@@ -98,8 +108,9 @@ public class DrawView extends View {
 
     private void touchStart(float x, float y) {
         mPath = new Path();
-        Stroke fp = new Stroke(currentColor, strokeWidth, mPath);
-        paths.add(fp);
+        StrokePoint startPoint = new StrokePoint(x, y);
+        Stroke stroke = new Stroke(currentColor, strokeWidth, mPath, startPoint);
+        paths.add(stroke);
         mPath.reset();
         mPath.moveTo(x, y);
         mX = x;
@@ -119,6 +130,10 @@ public class DrawView extends View {
 
     private void touchUp() {
         mPath.lineTo(mX, mY);
+
+        if (!paths.isEmpty()) {
+            paths.get(paths.size() - 1).endPoint = new StrokePoint(mX, mY);
+        }
     }
 
     @Override
