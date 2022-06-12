@@ -3,16 +3,34 @@ package com.example.lab5;
 import android.graphics.Path;
 
 public class Stroke {
-    public int color;
-    public int strokeWidth;
-    public Path path;
-    public StrokePoint startPoint;
-    public StrokePoint endPoint;
+    private final int color;
+    private final Path path;
+    private final StrokePoint startPoint;
+    private StrokePoint endPoint;
 
-    public Stroke(int color, int strokeWidth, Path path, StrokePoint startPoint) {
+    public Stroke(int color, Path path, StrokePoint startPoint) {
         this.color = color;
-        this.strokeWidth = strokeWidth;
         this.path = path;
         this.startPoint = startPoint;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public StrokePoint getStartPoint() {
+        return startPoint;
+    }
+
+    public StrokePoint getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(StrokePoint endPoint) {
+        this.endPoint = endPoint;
     }
 }

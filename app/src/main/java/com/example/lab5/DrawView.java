@@ -8,29 +8,28 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DrawView extends View {
+    private static final int DEFAULT_COLOR = Color.RED;
+    private static final int STROKE_WIDTH = 20;
+    private static final int CIRCLE_RADIUS = 30;
     private static final float TOUCH_TOLERANCE = 4;
-    private float mX, mY;
-    private Path mPath;
 
-    private final Paint mPaint;
-
-    private final ArrayList<Stroke> paths = new ArrayList<>();
-    private int currentColor;
-    private int strokeWidth;
-    private Bitmap mBitmap;
-    private Canvas mCanvas;
     private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private final ArrayList<Stroke> strokes = new ArrayList<>();
+
+    private Canvas mCanvas;
+    private Bitmap mBitmap;
+    private Paint mPaint;
+    private Path mCurrentPath;
+    private int mCurrentColor;
+    private float mX;
+    private float mY;
 
     public DrawView(Context context) {
         this(context, null);
@@ -38,42 +37,34 @@ public class DrawView extends View {
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mPaint = new Paint();
 
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setColor(Color.RED);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        mPaint.setAlpha(0xff);
 
     }
 
     public void init(int height, int width) {
-
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+        mCurrentColor = DEFAULT_COLOR;
+        mPaint = initPaint();
+    }
 
-        currentColor = Color.RED;
-
-        strokeWidth = 20;
+    @NonNull
+    private Paint initPaint() {
+        final Paint mPaint;
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setColor(mCurrentColor);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(STROKE_WIDTH);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setAlpha(0xff);
+        return mPaint;
     }
 
     public void setColor(int color) {
-        currentColor = color;
-    }
-
-    public void setStrokeWidth(int width) {
-        strokeWidth = width;
-    }
-
-    public void undo() {
-        if (paths.size() != 0) {
-            paths.remove(paths.size() - 1);
-            invalidate();
-        }
+        mCurrentColor = color;
     }
 
     public Bitmap save() {
@@ -83,56 +74,43 @@ public class DrawView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
+        drawBackground();
 
-        int backgroundColor = Color.WHITE;
-        mCanvas.drawColor(backgroundColor);
-
-        for (Stroke fp : paths) {
-            mPaint.setColor(fp.color);
-
-            mPaint.setStyle(Paint.Style.FILL);
-            mCanvas.drawCircle(fp.startPoint.x, fp.startPoint.y, 30, mPaint);
-
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(fp.strokeWidth);
-            mCanvas.drawPath(fp.path, mPaint);
-
-            if (fp.endPoint != null) {
-                mPaint.setStyle(Paint.Style.FILL);
-                mCanvas.drawCircle(fp.endPoint.x, fp.endPoint.y, 30, mPaint);
-            }
+        for (Stroke stroke : strokes) {
+            drawStroke(stroke);
         }
+
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
     }
 
-    private void touchStart(float x, float y) {
-        mPath = new Path();
-        StrokePoint startPoint = new StrokePoint(x, y);
-        Stroke stroke = new Stroke(currentColor, strokeWidth, mPath, startPoint);
-        paths.add(stroke);
-        mPath.reset();
-        mPath.moveTo(x, y);
-        mX = x;
-        mY = y;
+    private void drawBackground() {
+        int backgroundColor = Color.WHITE;
+        mCanvas.drawColor(backgroundColor);
     }
 
-    private void touchMove(float x, float y) {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
+    private void drawStroke(Stroke stroke) {
+        mPaint.setColor(stroke.getColor());
 
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
-            mX = x;
-            mY = y;
-        }
+        drawCircleOnStart(stroke);
+        drawPath(stroke);
+        drawCircleOnEnd(stroke);
     }
 
-    private void touchUp() {
-        mPath.lineTo(mX, mY);
+    private void drawCircleOnStart(Stroke stroke) {
+        mPaint.setStyle(Paint.Style.FILL);
+        mCanvas.drawCircle(stroke.getStartPoint().getX(), stroke.getStartPoint().getY(), CIRCLE_RADIUS, mPaint);
+    }
 
-        if (!paths.isEmpty()) {
-            paths.get(paths.size() - 1).endPoint = new StrokePoint(mX, mY);
+    private void drawPath(Stroke stroke) {
+        mPaint.setStyle(Paint.Style.STROKE);
+        mCanvas.drawPath(stroke.getPath(), mPaint);
+    }
+
+    private void drawCircleOnEnd(Stroke stroke) {
+        if (stroke.getEndPoint() != null) {
+            mPaint.setStyle(Paint.Style.FILL);
+            mCanvas.drawCircle(stroke.getEndPoint().getX(), stroke.getEndPoint().getY(), CIRCLE_RADIUS, mPaint);
         }
     }
 
@@ -143,18 +121,54 @@ public class DrawView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                touchStart(x, y);
+                startDrawingStroke(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                touchMove(x, y);
+                proceedDrawingStroke(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touchUp();
+                finishDrawingStroke();
                 invalidate();
                 break;
         }
         return true;
+    }
+
+    private void startDrawingStroke(float x, float y) {
+        mCurrentPath = new Path();
+        StrokePoint startPoint = new StrokePoint(x, y);
+        Stroke stroke = new Stroke(mCurrentColor, mCurrentPath, startPoint);
+
+        strokes.add(stroke);
+        mCurrentPath.moveTo(x, y);
+        mX = x;
+        mY = y;
+    }
+
+    private void proceedDrawingStroke(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        boolean moveIsSignificant = dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE;
+
+        if (moveIsSignificant) {
+            mCurrentPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mX = x;
+            mY = y;
+        }
+    }
+
+    private void finishDrawingStroke() {
+        mCurrentPath.lineTo(mX, mY);
+        addEndPointToStroke();
+    }
+
+    private void addEndPointToStroke() {
+        if (!strokes.isEmpty()) {
+            Stroke lastStroke = strokes.get(strokes.size() - 1);
+
+            lastStroke.setEndPoint(new StrokePoint(mX, mY));
+        }
     }
 }
