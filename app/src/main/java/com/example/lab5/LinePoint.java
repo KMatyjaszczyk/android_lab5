@@ -1,10 +1,10 @@
 package com.example.lab5;
 
-public class StrokePoint {
+public class LinePoint {
     private final float x;
     private final float y;
 
-    public StrokePoint(float x, float y) {
+    public LinePoint(float x, float y) {
         this.x = x;
         this.y = y;
     }

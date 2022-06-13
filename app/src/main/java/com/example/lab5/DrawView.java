@@ -21,7 +21,7 @@ public class DrawView extends View {
     private static final float TOUCH_TOLERANCE = 4;
 
     private final Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-    private final ArrayList<Stroke> strokes = new ArrayList<>();
+    private final ArrayList<Line> lines = new ArrayList<>();
 
     private Canvas mCanvas;
     private Bitmap mBitmap;
@@ -68,7 +68,7 @@ public class DrawView extends View {
     }
 
     public void clear() {
-        strokes.clear();
+        lines.clear();
         drawBackground();
     }
 
@@ -81,8 +81,8 @@ public class DrawView extends View {
         canvas.save();
         drawBackground();
 
-        for (Stroke stroke : strokes) {
-            drawStroke(stroke);
+        for (Line line : lines) {
+            drawStroke(line);
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
@@ -94,28 +94,28 @@ public class DrawView extends View {
         mCanvas.drawColor(backgroundColor);
     }
 
-    private void drawStroke(Stroke stroke) {
-        mPaint.setColor(stroke.getColor());
+    private void drawStroke(Line line) {
+        mPaint.setColor(line.getColor());
 
-        drawCircleOnStart(stroke);
-        drawPath(stroke);
-        drawCircleOnEnd(stroke);
+        drawCircleOnStart(line);
+        drawPath(line);
+        drawCircleOnEnd(line);
     }
 
-    private void drawCircleOnStart(Stroke stroke) {
+    private void drawCircleOnStart(Line line) {
         mPaint.setStyle(Paint.Style.FILL);
-        mCanvas.drawCircle(stroke.getStartPoint().getX(), stroke.getStartPoint().getY(), CIRCLE_RADIUS, mPaint);
+        mCanvas.drawCircle(line.getStartPoint().getX(), line.getStartPoint().getY(), CIRCLE_RADIUS, mPaint);
     }
 
-    private void drawPath(Stroke stroke) {
+    private void drawPath(Line line) {
         mPaint.setStyle(Paint.Style.STROKE);
-        mCanvas.drawPath(stroke.getPath(), mPaint);
+        mCanvas.drawPath(line.getPath(), mPaint);
     }
 
-    private void drawCircleOnEnd(Stroke stroke) {
-        if (stroke.getEndPoint() != null) {
+    private void drawCircleOnEnd(Line line) {
+        if (line.getEndPoint() != null) {
             mPaint.setStyle(Paint.Style.FILL);
-            mCanvas.drawCircle(stroke.getEndPoint().getX(), stroke.getEndPoint().getY(), CIRCLE_RADIUS, mPaint);
+            mCanvas.drawCircle(line.getEndPoint().getX(), line.getEndPoint().getY(), CIRCLE_RADIUS, mPaint);
         }
     }
 
@@ -143,10 +143,10 @@ public class DrawView extends View {
 
     private void startDrawingStroke(float x, float y) {
         mCurrentPath = new Path();
-        StrokePoint startPoint = new StrokePoint(x, y);
-        Stroke stroke = new Stroke(mCurrentColor, mCurrentPath, startPoint);
+        LinePoint startPoint = new LinePoint(x, y);
+        Line line = new Line(mCurrentColor, mCurrentPath, startPoint);
 
-        strokes.add(stroke);
+        lines.add(line);
         mCurrentPath.moveTo(x, y);
         mX = x;
         mY = y;
@@ -170,10 +170,10 @@ public class DrawView extends View {
     }
 
     private void addEndPointToStroke() {
-        if (!strokes.isEmpty()) {
-            Stroke lastStroke = strokes.get(strokes.size() - 1);
+        if (!lines.isEmpty()) {
+            Line lastLine = lines.get(lines.size() - 1);
 
-            lastStroke.setEndPoint(new StrokePoint(mX, mY));
+            lastLine.setEndPoint(new LinePoint(mX, mY));
         }
     }
 }

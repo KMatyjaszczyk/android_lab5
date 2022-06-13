@@ -2,13 +2,13 @@ package com.example.lab5;
 
 import android.graphics.Path;
 
-public class Stroke {
+public class Line {
     private final int color;
     private final Path path;
-    private final StrokePoint startPoint;
-    private StrokePoint endPoint;
+    private final LinePoint startPoint;
+    private LinePoint endPoint;
 
-    public Stroke(int color, Path path, StrokePoint startPoint) {
+    public Line(int color, Path path, LinePoint startPoint) {
         this.color = color;
         this.path = path;
         this.startPoint = startPoint;
@@ -22,15 +22,15 @@ public class Stroke {
         return path;
     }
 
-    public StrokePoint getStartPoint() {
+    public LinePoint getStartPoint() {
         return startPoint;
     }
 
-    public StrokePoint getEndPoint() {
+    public LinePoint getEndPoint() {
         return endPoint;
     }
 
-    public void setEndPoint(StrokePoint endPoint) {
+    public void setEndPoint(LinePoint endPoint) {
         this.endPoint = endPoint;
     }
 }
